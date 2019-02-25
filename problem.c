@@ -41,12 +41,13 @@ int main(int argc, char* argv[]){
 
 void heartbeat(struct reb_simulation* r){
         int snap_n = 0;
-        char SNAP[20];
+        char SNAP[30];
     if (reb_output_check(r, 10.*2.*M_PI)){  
         reb_output_timing(r, 0);
-        sprintf(SNAP,"snap01/snap%05d.dat",snap_n);
-        reb_output_orbits(r,SNAP);
-        snap_n ++;
+       sprintf(SNAP,"output/snap01/snap%05d.dat",snap_n);
+       reb_output_orbits(r,SNAP);
+   //    reb_output_orbits(r,"output/snap01/snap.dat");
+           snap_n ++;
     }
 }
 
