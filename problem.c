@@ -34,11 +34,19 @@ int main(int argc, char* argv[]){
     }
     reb_move_to_com(r);                // This makes sure the planetary systems stays within the computational domain and doesn't drift.
 
-    reb_integrate(r, INFINITY);
+  //  reb_integrate(r, INFINITY);
+    reb_integrate(r, 30000);
+
 }
 
 void heartbeat(struct reb_simulation* r){
+        int snap_n = 0;
+        char SNAP[20];
     if (reb_output_check(r, 10.*2.*M_PI)){  
         reb_output_timing(r, 0);
+        sprintf(SNAP,"snap01/snap%05d.dat",snap_n);
+        reb_output_orbits(r,SNAP);
+        snap_n ++;
     }
 }
+
