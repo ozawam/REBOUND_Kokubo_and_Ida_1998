@@ -13,6 +13,7 @@ int main(int argc, char* argv[]){
     r->collision            = REB_COLLISION_DIRECT;
     r->collision_resolve    = reb_collision_resolve_merge;        // Choose merger collision routine.
     r->heartbeat            = heartbeat;
+    r->hash_ctr             = 0;
 
     struct reb_particle star = {0};
     star.m = 1;
@@ -40,13 +41,15 @@ int main(int argc, char* argv[]){
 }
 
 void heartbeat(struct reb_simulation* r){
-        int snap_n = (int)(r->t)/(100.0*2.0*M_PI);
+     //   int snap_n = (int)(r->t)/(100.0*2.0*M_PI);
+        int snap_n = (r->hash_ctr);
         char SNAP[30];
     if (reb_output_check(r, 100.*2.*M_PI)){  
         reb_output_timing(r, 0);
        sprintf(SNAP,"output/snap01/snap%05d.dat",snap_n);
        reb_output_orbits(r,SNAP);
    //    reb_output_orbits(r,"output/snap01/snap.dat");
+       r->hash_ctr ++;
     }
 }
 
