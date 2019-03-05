@@ -19,9 +19,9 @@ int main(int argc, char* argv[]){
     star.m = 1;
     star.r = 0.1;
     reb_add(r, star);
-    
+ /*   
     // Add planets
-    int N_planets = 7;
+    int N_planets = 100;
     for (int i=0;i<N_planets;i++){
         double a = 1.+(double)i/(double)(N_planets-1);        // semi major axis in AU
         double v = sqrt(1./a);                     // velocity (circular orbit)
@@ -33,10 +33,42 @@ int main(int argc, char* argv[]){
         planet.vy = v;
         reb_add(r, planet); 
     }
+
+*/
+   // Planetesimal disk parameters
+    double M_sun=1.989*pow(10.0,33.0);//g
+    double total_disk_mass = 4000.0* 3.0*pow(10.0,23.0)/M_sun;
+    int N_planetesimals = 10;
+    double planetesimal_mass = total_disk_mass/N_planetesimals;
+    double delta_a = 0.085;
+    double central_a =1.0;
+    double amin = central_a - (delta_a/2.0), amax = central_a + (delta_a/2.0);   //planet at inner edge of disk
+    double powerlaw = -1.5;
+
+    // Generate Planetesimal Disk
+     for (int i=0;i< N_planetesimals;i++){
+        struct reb_particle pt = {0};
+        double a    = reb_random_powerlaw(amin,amax,powerlaw);
+        double e    = reb_random_rayleigh(0.005);
+        double inc  = reb_random_rayleigh(0.005);
+        double Omega = reb_random_uniform(0,2.*M_PI);
+        double apsis = reb_random_uniform(0,2.*M_PI);
+        double phi     = reb_random_uniform(0,2.*M_PI);
+
+        double rho = 2.0;
+        double one_au=1.49597870*pow(10.0,13.0);//cm
+
+        pt = reb_tools_orbit_to_particle(r->G, star, planetesimal_mass, a, e, inc, Omega, apsis, phi);
+        pt.m = planetesimal_mass;
+        pt.r         = pow((3.0*planetesimal_mass)/(4.0*M_PI*rho) ,1.0/3.0)/ one_au; //unit is AU.
+        pt.lastcollision = 0;
+        reb_add(r, pt);
+    }
+
     reb_move_to_com(r);                // This makes sure the planetary systems stays within the computational domain and doesn't drift.
 
   //  reb_integrate(r, INFINITY);
-    reb_integrate(r, 30000);
+    reb_integrate(r, 300000);
 
 }
 
@@ -45,7 +77,7 @@ void heartbeat(struct reb_simulation* r){
         int snap_n = (r->hash_ctr);
         char SNAP[30];
     if (reb_output_check(r, 100.*2.*M_PI)){  
-        reb_output_timing(r, 0);
+        reb_output_timing(r, 3000);
        sprintf(SNAP,"output/snap01/snap%05d.dat",snap_n);
        reb_output_orbits(r,SNAP);
    //    reb_output_orbits(r,"output/snap01/snap.dat");
