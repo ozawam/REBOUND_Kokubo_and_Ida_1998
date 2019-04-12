@@ -46,22 +46,22 @@ int main(int argc, char* argv[]){
 
    // Planetesimal disk parameters
     double M_sun=1.989*pow(10.0,33.0);//g
-    double total_disk_mass = 4000.0* 3.0*pow(10.0,23.0)/M_sun;
-    int N_planetesimals = 1000;
+    double total_disk_mass = 3000.*pow(10.0,23.0)/M_sun;
+    int N_planetesimals = 3000;
     double planetesimal_mass = total_disk_mass/N_planetesimals;
-    double delta_a = 0.085;
+    double delta_a = 0.021;
     double central_a = 1.0;
     double amin = central_a - (delta_a/2.0), amax = central_a + (delta_a/2.0);   //planet at inner edge of disk
     double powerlaw = -1.5;
     
-    r->N_active = N_planetesimals + 10;
+    r->N_active = N_planetesimals + 1;
 
     // Generate Planetesimal Disk
-     for (int i=0;i< N_planetesimals;i++){
+     for (int i=1;i<= N_planetesimals;i++){
         struct reb_particle pt = {0};
         double a    = reb_random_powerlaw(amin,amax,powerlaw);
-        double e    = reb_random_rayleigh(0.0014);
-        double inc  = reb_random_rayleigh(0.0007);
+        double e    = reb_random_rayleigh(0.0043);
+        double inc  = reb_random_rayleigh(0.00215);
         double Omega = reb_random_uniform(0,2.*M_PI);
         double apsis = reb_random_uniform(0,2.*M_PI);
         double phi     = reb_random_uniform(0,2.*M_PI);
@@ -110,7 +110,7 @@ void additional_forces(struct reb_simulation* const r){
 
 	//double dragcoefficient = 1e-10;
 
-	const int N = r->N;
+	const int N = r->N; //Sun + planetesimals
 	for (int i=1;i<N;i++){
         //variable
 	double r_sq = particles[i].x*particles[i].x + particles[i].y*particles[i].y;
